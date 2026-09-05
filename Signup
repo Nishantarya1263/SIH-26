@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Hub - Access Portal</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.12);
+            position: relative;
+            overflow: hidden;
+            width: 850px;
+            max-width: 100%;
+            min-height: 550px;
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+        }
+
+        /* Login Form Container */
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .container.active .sign-in-container {
+            transform: translateX(100%);
+        }
+
+        /* Sign Up Form Container */
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: show 0.6s;
+        }
+
+        @keyframes show {
+            0%, 49.99% {
+                opacity: 0;
+                z-index: 1;
+            }
+            50%, 100% {
+                opacity: 1;
+                z-index: 5;
+            }
+        }
+
+        form {
+            background-color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            height: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e293b;
+            font-size: 26px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #4f46e5;
+            font-weight: 700;
+            font-size: 22px;
+        }
+
+        p.subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        input {
+            background-color: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 15px 12px 42px;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+            color: #334155;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #4f46e5;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .forgot-pass {
+            color: #4f46e5;
+            font-size: 13px;
+            text-decoration: none;
+            margin: 10px 0 15px;
+            align-self: flex-end;
+            font-weight: 500;
+        }
+
+        .forgot-pass:hover {
+            text-decoration: underline;
+        }
+
+        button {
+            border-radius: 10px;
+            border: 1px solid #4f46e5;
+            background-color: #4f46e5;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 45px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #4338ca;
+            border-color: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        button.ghost {
+            background-color: transparent;
+            border-color: #ffffff;
+            width: auto;
+            margin-top: 20px;
+        }
+
+        button.ghost:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Sliding Overlay Panel */
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .container.active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: #ffffff;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container.active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .container.active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container.active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        .overlay-panel h1 {
+            color: #fff;
+        }
+
+        .overlay-panel p {
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 20px;
+            margin: 20px 0 30px;
+            color: #e0e7ff;
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            .container {
+                min-height: 650px;
+                width: 100%;
+            }
+
+            .form-container {
+                width: 100%;
+            }
+
+            .sign-in-container {
+                width: 100%;
+            }
+
+            .sign-up-container {
+                width: 100%;
+            }
+
+            .container.active .sign-in-container {
+                transform: translateY(100%);
+            }
+
+            .container.active .sign-up-container {
+                transform: translateY(0);
+            }
+
+            .overlay-container {
+                display: none; /* Hide overlay effect on smaller mobile screens for simpler stacked view */
+            }
+
+            .mobile-toggle {
+                display: block !important;
+                margin-top: 15px;
+                font-size: 13px;
+                color: #64748b;
+            }
+
+            .mobile-toggle span {
+                color: #4f46e5;
+                font-weight: 600;
+                cursor: pointer;
+            }
+        }
+
+        .mobile-toggle {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="container">
+        <!-- Sign Up Form (New Student Registration) -->
+        <div class="form-container sign-up-container">
+            <form action="#" id="signup-form">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-graduation-cap"></i> Student Hub
+                </div>
+                <h1>Create Account</h1>
+                <p class="subtitle">Join Student Hub with your credentials</p>
+                
+                <div class="input-group">
+                    <i class="fa-regular fa-user"></i>
+                    <input type="text" placeholder="Full Name" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="text" placeholder="Student ID / Roll No." required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" placeholder="Create Password" required>
+                </div>
+
+                <button type="submit">Sign Up</button>
+                
+                <div class="mobile-toggle">
+                    Already have an account? <span id="mobile-signin-btn">Sign In</span>
+                </div>
+            </form>
+        </div>
+
+        <!-- Login Form (Enter ID & Password) -->
+        <div class="form-container sign-in-container">
+            <form action="#" id="login-form">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-graduation-cap"></i> Student Hub
+                </div>
+                <h1>Welcome Back!</h1>
+                <p class="subtitle">Enter your Student ID and Password to log in</p>
+                
+                <div class="input-group">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="text" placeholder="Student ID or Email" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" placeholder="Password" required>
+                </div>
+
+                <a href="#" class="forgot-pass">Forgot Password?</a>
+
+                <button type="submit">Log In</button>
+
+                <div class="mobile-toggle">
+                    New to Student Hub? <span id="mobile-signup-btn">Create Account</span>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sliding Overlay Panel -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <!-- Overlay Left (Visible during Signup mode) -->
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To stay connected with your courses, assignments, and campus updates, please log in with your personal info.</p>
+                    <button class="ghost" id="signIn">Log In</button>
+                </div>
+
+                <!-- Overlay Right (Visible during Login mode) -->
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Student!</h1>
+                    <p>Enter your details and start your journey with the Student Hub portal today.</p>
+                    <button class="ghost" id="signUp">New Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to Handle Switching Between Sign Up & Login -->
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        const mobileSignUpBtn = document.getElementById('mobile-signup-btn');
+        const mobileSignInBtn = document.getElementById('mobile-signin-btn');
+
+        // Toggle to Sign Up view
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("active");
+        });
+
+        // Toggle to Sign In view
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("active");
+        });
+
+        // Mobile Screen Toggles
+        mobileSignUpBtn.addEventListener('click', () => {
+            container.classList.add("active");
+        });
+
+        mobileSignInBtn.addEventListener('click', () => {
+            container.classList.remove("active");
+        });
+
+        // Demo Form Submission Handler
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Login submitted!');
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Sign Up submitted!');
+        });
+    </script>
+</body>
+</html>
